@@ -1,82 +1,134 @@
-import React from 'react'
+import React, { useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { serverUrl } from "../App";
 
 const SignIn = () => {
-  const primaryColor = "#F0E4D3"
-  const hoverColor = "#DCC5B2"
-  const bgColor = "#FAF7F3"
-  const borderColor = "#D9A299"
+  const primaryColor = "#F0E4D3";
+  const bgColor = "#FAF7F3";
+  const borderColor = "#D9A299";
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleSignIn = async () => {
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/auth/signin`, // ✅ corrected URL
+        { email, password },
+        { withCredentials: true }
+      );
+      console.log("SignIn success:", result.data);
+      setError("");
+      // navigate to dashboard or home after successful login
+      // navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Sign in failed");
+      console.log("SignIn error:", err.response?.data || err.message);
+    }
+  };
 
   return (
-    <div 
+    <div
       className="min-h-screen w-full flex items-center justify-center p-4"
       style={{ backgroundColor: bgColor }}
     >
-      <div 
+      <div
         className="bg-white rounded-xl shadow-lg w-full max-w-md p-8 border"
         style={{ borderColor: primaryColor }}
       >
-        {/* Heading */}
-        <h2 className="text-2xl font-bold text-center mb-6" style={{ color: borderColor }}>
-          Sign In
-        </h2>
+        <h1
+          className="text-3xl font-bold mb-2"
+          style={{ color: borderColor }}
+        >
+          Feasto
+        </h1>
+        <p className="text-gray-600 mb-8">
+          Sign in to your account to get started with delicious deliveries
+        </p>
 
-        {/* Form */}
-        <form className="space-y-4">
-          {/* Email */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
-              Email
-            </label>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+
+        {/* Email */}
+        <div className="mb-4">
+          <label
+            htmlFor="email"
+            className="block text-gray-700 font-medium mb-1"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none"
+            placeholder="Enter your Email"
+            style={{ border: `1px solid ${borderColor}` }}
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+          />
+        </div>
+
+        {/* Password */}
+        <div className="mb-4">
+          <label
+            htmlFor="password"
+            className="block text-gray-700 font-medium mb-1"
+          >
+            Password
+          </label>
+          <div className="relative">
             <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2"
-              style={{
-                borderColor: borderColor,
-                backgroundColor: primaryColor,
-                focusRingColor: borderColor
-              }}
+              type={showPassword ? "text" : "password"}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none"
+              placeholder="Enter your Password"
+              style={{ border: `1px solid ${borderColor}` }}
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
             />
+            <button
+              type="button"
+              className="absolute right-3 top-[14px] text-gray-500 cursor-pointer"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+            </button>
           </div>
+        </div>
 
-          {/* Password */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              className="w-full px-4 py-2 rounded-lg border outline-none focus:ring-2"
-              style={{
-                borderColor: borderColor,
-                backgroundColor: primaryColor
-              }}
-            />
-          </div>
+        <div className="text-right mb-4 text-[#c94c38] font-medium" onClick={()=>navigate("forgot password")}>
+          Forgot Password?
+        </div>
 
-          {/* Button */}
+        {/* Buttons */}
+        <div className="flex flex-col gap-3">
           <button
-            type="submit"
-            className="w-full py-2 px-4 rounded-lg font-semibold transition-colors"
-            style={{ backgroundColor: borderColor, color: "white" }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = hoverColor}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = borderColor}
+            className="font-semibold w-full flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 bg-[#D9A299] hover:bg-[#7c583e] text-white cursor-pointer"
+            onClick={handleSignIn}
           >
             Sign In
           </button>
-        </form>
 
-        {/* Footer */}
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
-          <a href="/signup" style={{ color: borderColor }} className="font-medium">
-            Sign Up
-          </a>
+          <button className="w-full flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-100">
+            <FcGoogle size={20} />
+            <span>Sign In with Google</span>
+          </button>
+        </div>
+
+        <p
+          className="text-center mt-6 cursor-pointer"
+          onClick={() => navigate("/signup")}
+        >
+          Want to create a new account?{" "}
+          <span className="text-[#c94c38]">Sign Up</span>
         </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SignIn
+export default SignIn;
