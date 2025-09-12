@@ -1,6 +1,8 @@
+import axios from 'axios';
 import React, { useState } from 'react'
 import { IoArrowBack } from "react-icons/io5";
 import {  useNavigate } from 'react-router-dom';
+import { serverUrl } from '../App';
 
 const ForgotPassword = () => {
     const [step, setStep] = useState(1);
@@ -10,6 +12,54 @@ const ForgotPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const navigate = useNavigate();
+
+    const handleSendOtp=async()=>{
+        try {
+           const result=await axios.post(`${serverUrl}/api/auth/send-otp`,
+             {email},
+            {withCredentials:true}) 
+            console.log(result)
+
+            setStep(2);
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+        const handleVerifyOtp=async()=>{
+        try {
+           const result=await axios.post(`${serverUrl}/api/auth/verify-otp`,
+             {email, otp},
+            {withCredentials:true}) 
+            console.log(result)
+
+            setStep(3);
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+     const handleResetPassword = async () => {
+  try {
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    const result = await axios.post(
+      `${serverUrl}/api/auth/reset-password`,
+      { email, newPassword },   //  matches backend
+      { withCredentials: true }
+    );
+
+    console.log("Password reset successful:", result.data);
+    navigate("/signin");
+  } catch (error) {
+    console.error("Reset error:", error.response?.data || error.message);
+  }
+};
+
 
     return (
         <div className='flex w-full items-center justify-center min-h-screen p-4 bg-[#FAF7F3]'>
@@ -35,7 +85,7 @@ const ForgotPassword = () => {
                             />
                         </div>
                         <button className={`font-semibold w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 bg-[#D9A299] hover:bg-[#7c583e] text-white cursor-pointer`}
-                            >
+                           onClick={handleSendOtp} >
                            Send OTP
                         </button>
                     </div>
@@ -58,7 +108,7 @@ const ForgotPassword = () => {
                             />
                         </div>
                         <button className={`font-semibold w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 bg-[#D9A299] hover:bg-[#7c583e] text-white cursor-pointer`}
-                            >
+                            onClick={handleVerifyOtp}>
                            Verify
                         </button>
                     </div>
@@ -74,7 +124,7 @@ const ForgotPassword = () => {
                             <label htmlFor="password" className='block text-gray-700 font-medium mb-1'>
                                 New Password</label>
                             <input
-                                type="email"
+                                type="password"
                                 className='w-full border-[1px] border-gray-200 rounded-lg px-3 py-2 focus:outline-none'
                                 placeholder='Enter new password'
                                 onChange={(e) => setNewPassword(e.target.value)}
@@ -94,7 +144,7 @@ const ForgotPassword = () => {
                             />
                         </div>
                         <button className={`font-semibold w-full mt-4 flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 bg-[#D9A299] hover:bg-[#7c583e] text-white cursor-pointer`}
-                            >
+                           onClick={handleResetPassword} >
                           Reset Password
                         </button>
                     </div>
