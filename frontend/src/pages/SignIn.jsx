@@ -4,6 +4,10 @@ import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { serverUrl } from "../App";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../firebase";
+import {} from 'react-spinners'
+import { setLogLevel } from "firebase/app";
 
 const SignIn = () => {
   const primaryColor = "#F0E4D3";
@@ -14,10 +18,14 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setloading] = useState(false)
+  
+
 
   const navigate = useNavigate();
 
   const handleSignIn = async () => {
+    setloading(true)
     try {
       const result = await axios.post(
         `${serverUrl}/api/auth/signin`, // ✅ corrected URL
@@ -26,13 +34,32 @@ const SignIn = () => {
       );
       console.log("SignIn success:", result.data);
       setError("");
+      setloading(false)
       // navigate to dashboard or home after successful login
       // navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Sign in failed");
       console.log("SignIn error:", err.response?.data || err.message);
+      setloading(false)
     }
   };
+
+  const handleGoogleAuth = async()=>{
+   
+    const provider = new GoogleAuthProvider()
+    const result = await signInWithPopup(auth, provider)
+  
+    try {
+      const {data} = await axios.post(`${serverUrl}/api/auth/google-auth`,
+     { 
+      email: result.user.email,   
+     }, 
+     {withCredentials: true})
+     console.log(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div
@@ -53,9 +80,7 @@ const SignIn = () => {
           Sign in to your account to get started with delicious deliveries
         </p>
 
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-
-        {/* Email */}
+        
         <div className="mb-4">
           <label
             htmlFor="email"
@@ -69,7 +94,7 @@ const SignIn = () => {
             placeholder="Enter your Email"
             style={{ border: `1px solid ${borderColor}` }}
             onChange={(e) => setEmail(e.target.value)}
-            value={email}
+            value={email} required
           />
         </div>
 
@@ -88,7 +113,7 @@ const SignIn = () => {
               placeholder="Enter your Password"
               style={{ border: `1px solid ${borderColor}` }}
               onChange={(e) => setPassword(e.target.value)}
-              value={password}
+              value={password} required
             />
             <button
               type="button"
@@ -108,12 +133,15 @@ const SignIn = () => {
         <div className="flex flex-col gap-3">
           <button
             className="font-semibold w-full flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 bg-[#D9A299] hover:bg-[#7c583e] text-white cursor-pointer"
-            onClick={handleSignIn}
+            onClick={handleSignIn} disabled={loading}
           >
-            Sign In
+             {loading? <ClipLoader size={20} color='white'/>:"Sign In"}
+
           </button>
 
-          <button className="w-full flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-100">
+         {error && <p className='text-red-600 text-center mt-3'>{error}</p>}
+
+          <button onClick={handleGoogleAuth} className="w-full flex items-center justify-center gap-2 border rounded-lg px-4 py-2 transition duration-200 border-gray-400 hover:bg-gray-100">
             <FcGoogle size={20} />
             <span>Sign In with Google</span>
           </button>
