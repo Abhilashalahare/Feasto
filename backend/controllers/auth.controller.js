@@ -36,8 +36,9 @@ export const signup = async(req, res)=>{
        
 
         //token is generated and added inside cookie-- utils/token.js
-
-        const token = await genToken(newUser._id)
+     
+      const token = genToken(newUser._id);
+      console.log("Generated JWT:", token);
         // is token ko cookies k andr parse krna h
         res.cookie("token", token, {
              secure:false, //http - localhost me secure nhi h isly false rkhre h, bad me deploy k time true krenge
