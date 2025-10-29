@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.routes.js";
 import cors from "cors"
 import userRouter from "./routes/user.routes.js";
+import shopRouter from "./routes/shop.routes.js";
+import itemRouter from "./routes/item.routes.js";
 
 dotenv.config();//This loads variables from .env into process.env
 
@@ -23,11 +25,13 @@ app.use(express.json());  //frontend se data ayega vo json me convert hona chaiy
 app.use(cookieParser()); //so that tokens can easily get parsed inside cookies
 app.use("/api/auth", authRouter)
 app.use("/api/user", userRouter)
+app.use("/api/shop", shopRouter)
+app.use("/api/item", itemRouter)
 app.use(express.urlencoded({ extended: true }))
 
-app.get("/", (req, res) => {
-  res.send("Server is running 🚀");
-});
+// app.get("/", (req, res) => {
+//   res.send("Server is running 🚀");
+// });
 
 app.listen(port, ()=>{
     connectDB()
