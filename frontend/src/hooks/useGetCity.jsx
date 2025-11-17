@@ -11,7 +11,7 @@ function useGetCity() {
     const apiKey = import.meta.env.VITE_GEOAPIKEY
     useEffect(()=>{
         navigator.geolocation.getCurrentPosition(async(position)=>{
-            // console.log(position);
+            console.log(position);
             const latitude = position.coords.latitude
             const longitude = position.coords.longitude
 
@@ -20,7 +20,7 @@ function useGetCity() {
             dispatch(setCurrentCity(result?.data?.results[0]?.city))
             dispatch(setCurrentState(result?.data?.results[0]?.state))
             // console.log(result.data.results[0].state);
-               dispatch(setCurrentAddress(result?.data?.results[0]?.address_line1 || result?.data?.results[0]?.address_line2))
+               dispatch(setCurrentAddress(result?.data?.results[0]?.address_line2 || result?.data?.results[0]?.address_line1))
                 // console.log(result.data);
             
             

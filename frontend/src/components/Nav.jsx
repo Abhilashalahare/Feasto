@@ -19,7 +19,7 @@ const Nav = () => {
 
   // const [query,setQuery]=useState("")
   const dispatch = useDispatch()
-  // const navigate=useNavigate()
+  const navigate=useNavigate()
 
   const handleLogOut = async () => {
     try {
@@ -141,7 +141,8 @@ const Nav = () => {
           <div className='text-[17px] font-semibold'>
             {userData.fullname}
           </div>
-          <div className='md:hidden text-[#c55f50] font-semibold cursor-pointer'>My Orders</div>
+          {userData.role == "user" &&  <div className='md:hidden text-[#c55f50] font-semibold cursor-pointer'>My Orders</div>}
+         
           <div onClick={handleLogOut} className='text-[#c55f50] font-semibold cursor-pointer'>Log Out</div>
         </div>}
       </div>
