@@ -12,7 +12,7 @@ import { FaPlus } from "react-icons/fa6";
 import { TbReceipt2 } from "react-icons/tb";
 
 const Nav = () => {
-  const { userData, currentCity } = useSelector(state => state.user)
+  const { userData, currentCity, cartItems } = useSelector(state => state.user)
   const { myShopData} = useSelector(state => state.owner)
   const [showInfo, setShowInfo] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
@@ -119,9 +119,9 @@ const Nav = () => {
             </button>
 
              {/* cart */}
-        <div className='relative cursor-pointer'>
+        <div className='relative cursor-pointer' onClick={()=>navigate("/cart")}>
           <FiShoppingCart size={25} className='text-[#c55f50]' />
-          <span className='absolute right-[-9px] top-[-12px] text-[#c55f50]'>0</span>
+          <span className='absolute right-[-9px] top-[-12px] text-[#c55f50]'>{cartItems.length}</span>
         </div>
 
 

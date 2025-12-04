@@ -5,12 +5,10 @@ import { FaUtensils } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import { FaPen } from "react-icons/fa";
 import OwnerItemCard from './OwnerItemCard';
-// import OwnerItemCard from './OwnerItemCard';
 
 const OwnerDashboard = () => {
   const navigate=useNavigate()
   const {myShopData} = useSelector(state=>state.owner)
-
   
 
   return (
